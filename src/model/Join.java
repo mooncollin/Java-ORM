@@ -129,11 +129,6 @@ public class Join
 			}
 		}
 		
-//		if(!valueFilters.isEmpty() && !columnFilters.isEmpty())
-//		{
-//			result += "\nAND\n";
-//		}
-		
 		var colFilterIt = columnFilters.iterator();
 		var columnIt = otherColumns.iterator();
 		var tableIt = otherTables.iterator();

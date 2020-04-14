@@ -4,9 +4,12 @@ import java.sql.Types;
 import java.util.Map;
 import java.util.Objects;
 
-public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
+public class Column <T>
 {
 	public static final int TEXT = -10;
+	public static final int TINYBLOB = -11;
+	public static final int MEDIUMBLOB = -12;
+	public static final int LONGBLOB = -13;
 	
 	private static final Map<Integer, String> TYPE_TO_STRING = Map.ofEntries
 	(
@@ -49,7 +52,10 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 			Map.entry(Types.TINYINT, "TINYINT"),
 			Map.entry(Types.VARBINARY, "VARBINARY"),
 			Map.entry(Types.VARCHAR, "VARCHAR"),
-			Map.entry(TEXT, "TEXT")
+			Map.entry(TEXT, "TEXT"),
+			Map.entry(TINYBLOB, "TINYBLOB"),
+			Map.entry(MEDIUMBLOB, "MEDIUMBLOB"),
+			Map.entry(LONGBLOB, "LONGBLOB")
 	);
 	
 	private final int type;
@@ -59,7 +65,6 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 	private final boolean nullable;
 	private final boolean autoIncrement;
 	private final ForeignKey<T> foreignKey;
-	private final Class<T> valueClass;
 	
 	private T value;
 	
@@ -74,11 +79,10 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 	 * @param autoIncrement
 	 * @param foreign
 	 */
-	public Column(Class<T> clazz, String name, int type, 
+	public Column(String name, int type, 
 		int length, boolean primaryKey, boolean nullable, boolean autoIncrement,
 		ForeignKey<T> foreign)
 	{
-		this.valueClass = Objects.requireNonNull(clazz);
 		this.type = type;
 		this.name = Objects.requireNonNull(name);
 		this.length = length;
@@ -88,14 +92,10 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 		this.foreignKey = foreign;
 	}
 	
-	public void setValue(T value)
-	{
-		this.value = this.valueClass.cast(value);
-	}
-	
+	@SuppressWarnings("unchecked")
 	public void setValue(Object value)
 	{
-		this.value = this.valueClass.cast(value);
+		this.value = (T) value;
 	}
 	
 	public T getValue()
@@ -143,11 +143,6 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 		return foreignKey != null;
 	}
 	
-	public Class<T> getValueClass()
-	{
-		return valueClass;
-	}
-	
 	public String toString()
 	{
 		String result = String.format("%s %s%s", name, TYPE_TO_STRING.get(type), length > 0 ? "(" + length + ")" : "");
@@ -181,14 +176,9 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 			   this.value.equals(otherC.value);
 	}
 	
-	public int compareTo(Column<T> other)
-	{
-		return this.value.compareTo(other.value);
-	}
-	
 	public Object clone()
 	{
-		var<T> newColumn = new Column<T>(valueClass, this.name,
+		var<T> newColumn = new Column<T>(this.name,
 				this.type, this.length, this.primaryKey,
 				this.nullable, this.autoIncrement, this.foreignKey);
 		
@@ -199,14 +189,6 @@ public class Column <T extends Comparable<T>> implements Comparable<Column<T>>
 	public Column<T> typeClone()
 	{
 		return getClass().cast(clone());
-	}
-	
-	public Column<T> cloneWithValue(T value)
-	{
-		var<T> cloned = typeClone();
-		cloned.setValue(value);
-		
-		return cloned;
 	}
 	
 	public Column<T> cloneWithValue(Object value)

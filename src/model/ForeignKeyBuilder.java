@@ -2,13 +2,13 @@ package model;
 
 import java.util.Objects;
 
-public class ForeignKeyBuilder <T extends Comparable<T>>
+public class ForeignKeyBuilder <T>
 {
 	private String thisColumnName;
 	private Table tableReference;
 	private final Column<T> columnReference;
 	
-	public static <J extends Comparable<J>> ForeignKeyBuilder<J> start(Column<J> columnReference)
+	public static <J> ForeignKeyBuilder<J> start(Column<J> columnReference)
 	{
 		return new ForeignKeyBuilder<J>(columnReference);
 	}

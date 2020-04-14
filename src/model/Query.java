@@ -40,7 +40,7 @@ public class Query
 		joins			= new HashMap<String, Join>();
 		this.model 		= Objects.requireNonNull(model);
 		this.database 	= Objects.requireNonNull(database);
-		modelColumns 	= model.getColumns().stream().toArray(Column<?>[]::new);
+		modelColumns 	= model.getColumns();
 	}
 	
 	public <F extends Comparable<F>> Query filter(Column<F> column, F value)

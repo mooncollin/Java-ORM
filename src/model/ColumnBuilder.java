@@ -2,7 +2,7 @@ package model;
 
 import java.util.Objects;
 
-public class ColumnBuilder<F extends Comparable<F>>
+public class ColumnBuilder<F>
 {
 	private final int type;
 	private String name;
@@ -12,16 +12,14 @@ public class ColumnBuilder<F extends Comparable<F>>
 	private boolean autoIncrement;
 	private ForeignKey<F> foreignKey;
 	private ForeignKeyBuilder<F> foreignKeyBuilder;
-	private final Class<F> valueClass;
 	
-	public static <J extends Comparable<J>> ColumnBuilder<J> start(Class<J> clazz, int type)
+	public static <J> ColumnBuilder<J> start(int type)
 	{
-		return new ColumnBuilder<J>(clazz, type);
+		return new ColumnBuilder<J>(type);
 	}
 	
-	public ColumnBuilder(Class<F> clazz, int type)
+	public ColumnBuilder(int type)
 	{
-		valueClass = clazz;
 		this.type = type;
 	}
 	
@@ -77,7 +75,7 @@ public class ColumnBuilder<F extends Comparable<F>>
 													.build();
 		}
 		
-		return new Column<F>(this.valueClass, this.name, this.type,
+		return new Column<F>(this.name, this.type,
 			this.length, this.primaryKey, this.nullable, this.autoIncrement,
 			this.foreignKey);
 	}

@@ -2,7 +2,7 @@ package model;
 
 import java.util.Objects;
 
-public class ForeignKey <T extends Comparable<T>>
+public class ForeignKey <T>
 {
 	private final String thisColumnName;
 	private final Table tableReference;
